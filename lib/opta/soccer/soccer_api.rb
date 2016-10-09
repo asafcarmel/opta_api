@@ -8,12 +8,24 @@ module Opta
         response_collection('squads', people: 'yes', tmcl: tournament)
       end
 
-      def match_statistics(match_id)
-        response_member('matchstats', match_id, detailed: 'yes')
+      def match_statistics(match)
+        response_member('matchstats', match, detailed: 'yes')
       end
 
-      def match_event(match_id)
-        response_member('matchevent', match_id)
+      def match_event(match)
+        response_member('matchevent', match)
+      end
+
+      def match_list(tournament)
+        response_collection('match', tmcl: tournament)
+      end
+
+      def match(match)
+        response_member('match', match)
+      end
+
+      def lineups(tournament)
+        response_collection('match', tmcl: tournament, live: 'yes', lineup: 'yes')
       end
 
       def path
