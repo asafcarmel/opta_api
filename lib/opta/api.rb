@@ -23,7 +23,7 @@ module Opta
     end
 
     def match_list(tournament)
-      response_collection('match', tmcl: tournament)
+      response_collection('match', tmcl: tournament, live: 'yes')
     end
 
   end
