@@ -15,7 +15,8 @@ module Opta
 
     def get_params(params)
       p = params || {}
-      p.merge(_rt: 'b', _fmt: 'json')
+      p.merge(_fmt: 'json')
+      #p.merge(_rt: 'b', _fmt: 'json')
     end
 
     def response_member(feed, id, params=nil)
@@ -33,7 +34,8 @@ module Opta
 
     def generic_request(url, params, accept)
       begin
-        return RestClient.get(url, params: params, accept: accept)
+        RestClient.proxy = 'http://52.45.43.141:3128'
+        return RestClient.get(url, params: params)
       rescue RestClient::RequestTimeout => timeout
         raise Opta::Exception, 'The API did not respond in a reasonable amount of time'
       rescue RestClient::Exception => e
