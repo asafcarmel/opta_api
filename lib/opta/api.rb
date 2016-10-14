@@ -11,7 +11,7 @@ module Opta
     end
 
     def squads(tournament)
-      response_collection('squads', tmcl: tournament)
+      response_collection('squads', people: 'yes', tmcl: tournament, _pgSz: 1000)
     end
 
     def match_statistics(match)
@@ -23,7 +23,7 @@ module Opta
     end
 
     def match_list(tournament)
-      response_collection('match', tmcl: tournament, live: 'yes')
+      response_collection('match', tmcl: tournament, live: 'yes', _pgSz: 1000)
     end
 
   end
