@@ -34,7 +34,7 @@ module Opta
 
     def generic_request(url, params, accept)
       begin
-        RestClient.proxy = 'http://52.45.43.141:3128'
+        # RestClient.proxy = 'http://52.45.43.141:3128'
         return RestClient.get(url, params: params)
       rescue RestClient::RequestTimeout => timeout
         raise Opta::Exception, 'The API did not respond in a reasonable amount of time'
