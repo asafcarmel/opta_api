@@ -8,6 +8,10 @@ module Opta
         'footballdata'
       end
 
+      def match_statistics(match)
+        response_member('matchstats', match)
+      end
+
     end
   end
 end
