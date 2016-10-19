@@ -19,12 +19,32 @@ module Opta
       #p.merge(_rt: 'b', _fmt: 'json')
     end
 
-    def response_member(feed, id, params=nil)
+    def response_member(feed, id, params={})
       response_json(get_member_uri(self.path, feed, id), params)
     end
 
-    def response_collection(feed, params=nil)
+    def response_collection(feed, params={})
       response_json(get_collection_uri(self.path, feed), params)
+    end
+
+    def add_paging_params(params, page, size=1000)
+      params['_pgNm'] = page
+      params['_pgSz'] = size
+    end
+
+    def response_pages(feed, params={})
+      add_paging_params(params, 1)
+      resp = response_collection('match', params)
+      feed_array = resp[feed]
+
+      if feed_array.instance_of?(Array) && feed_array.size >= 1000
+        add_paging_params(params, 2)
+        resp2 = response_collection('match', params)
+
+        feed_array.unshift(*resp2[feed]) if resp2[feed].instance_of?(Array)
+      end
+
+      return resp;
     end
 
     def response_json(url, params)
@@ -34,7 +54,6 @@ module Opta
 
     def generic_request(url, params, accept)
       begin
-        # RestClient.proxy = 'http://52.45.43.141:3128'
         return RestClient.get(url, params: params)
       rescue RestClient::RequestTimeout => timeout
         raise Opta::Exception, 'The API did not respond in a reasonable amount of time'

@@ -15,7 +15,7 @@ module Opta
     end
 
     def match_statistics(match)
-      response_member('matchstats', match, detailed: 'yes')
+      response_member('matchstats', match)
     end
 
     def match_event(match)
@@ -23,8 +23,7 @@ module Opta
     end
 
     def match_list(tournament)
-      response_collection('match', tmcl: tournament, live: 'yes', _pgSz: 1000)
+      response_pages('match', tmcl: tournament, live: 'yes')
     end
-
   end
 end
