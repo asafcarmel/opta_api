@@ -2,7 +2,7 @@ require 'opta/api'
 
 module Opta
   module Hockey
-    class HockeyrApi < Opta::Api
+    class HockeyApi < Opta::Api
 
       def path
         'icehockeydata'
