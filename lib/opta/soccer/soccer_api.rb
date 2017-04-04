@@ -7,13 +7,18 @@ module Opta
       DateFormat = '%Y-%m-%d_%H_%M_%S'
 
       def match_statistics(match)
-        run_in_vcr(feed, match) { return response_member('matchstats', match, detailed: 'yes') }
+        feed = 'matchstats'
+        file_name = get_vcr_file_name(feed, match)
+        return super if file_name.nil?
+        run_in_vcr(feed, match, file_name) { return response_member(feed, match, detailed: 'yes') }
       end
 
       def match_event(match)
+        feed = 'matchevent'
+        file_name = get_vcr_file_name(feed, match)
+        return super if file_name.nil?
         resp = nil
-        run_in_vcr('matchevent', match) { resp = response_member('matchevent', match) }
-
+        run_in_vcr(feed, match, file_name) { resp = response_member(feed, match) }
         offset = time_offset
         resp['liveData']['event'].each {|event| fix_timestamp(event, offset) }
 
@@ -21,7 +26,7 @@ module Opta
       end
 
 
-      def run_in_vcr(feed, match)
+      def run_in_vcr(feed, match, file_name)
         VCR.configure do |c|
           c.hook_into :webmock
           c.cassette_library_dir = CassettesFolder
@@ -29,8 +34,6 @@ module Opta
           c.filter_sensitive_data("\xEF\xBB\xBF") { '' }
           c.before_record { |i| i.response.body.force_encoding('UTF-8') }
         end
-
-        file_name = get_vcr_file_name(feed, match)
         VCR.use_cassette(file_name, record: :none, match_requests_on: [:uri], serialize_with: :yaml, decode_compressed_response: true) do
           yield
         end
@@ -42,6 +45,7 @@ module Opta
 
       def get_vcr_file_name(feed, match)
         times   = get_feed_times(feed, match)
+        return nil if times.blank?
         current = find_current_time(times)
         build_file_name(feed, match, current)
       end
@@ -62,14 +66,11 @@ module Opta
         range.first
       end
 
-      @@times = {}
-
       def get_feed_times(feed, match)
         key = filename_prefix(feed, match)
-        @@times[key] = build_time_ranges(feed, match) unless @@times.key?(key)
-        @@times[key]
+        build_time_ranges(feed, match)
       end
-      
+
       def build_time_ranges(feed, match)
         filename_prefix = self.filename_prefix(feed, match)
         offset = time_offset
