@@ -34,14 +34,15 @@ module Opta
 
     def response_pages(feed, params={})
       add_paging_params(params, 1)
-      resp = response_collection('match', params)
-      feed_array = resp[feed]
+      resp = response_collection(feed, params)
+      page = feed_array = resp[feed]
+      index = 1
 
-      if feed_array.instance_of?(Array) && feed_array.size >= 1000
-        add_paging_params(params, 2)
-        resp2 = response_collection('match', params)
-
-        feed_array.unshift(*resp2[feed]) if resp2[feed].instance_of?(Array)
+      while page.size > 0 do
+        index += 1
+        add_paging_params(params, index)
+        page = response_collection(feed, params)[feed]
+        feed_array.unshift(*page)
       end
 
       return resp;
