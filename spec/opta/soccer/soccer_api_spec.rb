@@ -59,5 +59,14 @@ describe Opta::Soccer::SoccerApi, vcr: {
           end
         end
 
+        describe 'tournament_schedule' do
+          let(:tournament_schedule) { {} }
+          let(:europa_league_id) { "4jvp2pwv9xdhy5udpuvwqofzd" }
+          it 'fetches tournament_schedule' do
+            events = api.tournament_schedule(europa_league_id)
+            expect(events['matchDate'].count).to eq(32)
+          end
+        end
+
       end
     end

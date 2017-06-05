@@ -25,5 +25,9 @@ module Opta
     def match_list(tournament)
       response_pages('match', tmcl: tournament, live: 'yes')
     end
+
+    def tournament_schedule(tournament)
+      response_member('tournamentschedule', tournament)
+    end
   end
 end
